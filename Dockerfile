@@ -1,4 +1,4 @@
-FROM golang:1.8-alpine
+FROM golang:1.6-alpine
 RUN apk --no-cache add ca-certificates bash git
 WORKDIR /root/
 
