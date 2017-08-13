@@ -1,4 +1,4 @@
-FROM golang:1.6-alpine
+FROM golang:1.8-alpine
 RUN apk --no-cache add ca-certificates bash git
 WORKDIR /root/
 
@@ -9,6 +9,8 @@ ADD http://geolite.maxmind.com/download/geoip/database/GeoLite2-City.mmdb.gz /ro
 RUN gzip -d GeoLite2-Country.mmdb.gz
 RUN gzip -d GeoLite2-City.mmdb.gz
 
+COPY index.html /root/index.html
+
 EXPOSE 8080
 
-CMD [ "ipd","--country-db", "GeoLite2-Country.mmdb", "--city-db", "GeoLite2-City.mmdb", "--port-lookup", "--reverse-lookup", "--log-level", "debug", "--trusted-header", "x-forwarded-for" ]
+CMD [ "ipd","--country-db", "GeoLite2-Country.mmdb", "--city-db", "GeoLite2-City.mmdb", "--port-lookup", "--reverse-lookup", "--log-level", "debug", "--trusted-header", "x-forwarded-for", "--template", "/root/index.html" ]
