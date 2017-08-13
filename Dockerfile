@@ -11,4 +11,4 @@ RUN gzip -d GeoLite2-City.mmdb.gz
 
 EXPOSE 8080
 
-CMD [ "ipd","--country-db", "GeoLite2-Country.mmdb", "--city-db", "GeoLite2-City.mmdb", "--port-lookup", "--reverse-lookup", "--log-level", "debug" ]
+CMD [ "ipd","--country-db", "GeoLite2-Country.mmdb", "--city-db", "GeoLite2-City.mmdb", "--port-lookup", "--reverse-lookup", "--log-level", "debug", "--trusted-header", "X-Forwarded-For" ]
