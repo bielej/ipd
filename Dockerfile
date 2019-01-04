@@ -1,16 +1,14 @@
-FROM golang:1.8-alpine
-RUN apk --no-cache add ca-certificates bash git
-WORKDIR /root/
+FROM mpolden/echoip
 
-RUN go get github.com/martinp/ipd
+WORKDIR /opt/echoip
 
-ADD http://geolite.maxmind.com/download/geoip/database/GeoLite2-Country.mmdb.gz /root/
-ADD http://geolite.maxmind.com/download/geoip/database/GeoLite2-City.mmdb.gz /root/
+ADD http://geolite.maxmind.com/download/geoip/database/GeoLite2-Country.mmdb.gz /opt/echoip/
+ADD http://geolite.maxmind.com/download/geoip/database/GeoLite2-City.mmdb.gz /opt/echoip/
 RUN gzip -d GeoLite2-Country.mmdb.gz
 RUN gzip -d GeoLite2-City.mmdb.gz
 
-COPY index.html /root/index.html
+COPY index.html /opt/echoip/index.html
 
 EXPOSE 8080
 
-CMD [ "ipd","--country-db", "GeoLite2-Country.mmdb", "--city-db", "GeoLite2-City.mmdb", "--port-lookup", "--reverse-lookup", "--log-level", "debug", "--trusted-header", "X-Forwarded-For", "--template", "/root/index.html" ]
+CMD [ "ipd","--country-db", "/opt/echoip/GeoLite2-Country.mmdb", "--city-db", "/opt/echoip/GeoLite2-City.mmdb", "--port-lookup", "--reverse-lookup", "--log-level", "debug", "--trusted-header", "X-Forwarded-For", "--template", "/opt/echoip/index.html" ]

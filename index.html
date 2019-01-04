@@ -103,3 +103,120 @@ $ http https://ip.feep.me/port/8080
     </div>
   </body>
 </html>
+
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>What is my IP address? &mdash; {{ .Host }}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="What is my IP address?">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pure/0.6.2/pure-min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pure/0.6.2/grids-responsive-min.css">
+    <style>
+      html, .pure-g [class *= "pure-u"] {
+        background-color: white;
+        font-family: "Open Sans", sans-serif;
+      }
+      pre {
+        font-family: "Monaco", "Menlo", "Consolas", "Courier New", monospace;
+      }
+      body {
+        margin-left: auto;
+        margin-right: auto;
+        max-width: 80%;
+        margin-bottom: 20px;
+      }
+      .ip {
+        border: 1px solid #cbcbcb;
+        background: #f2f2f2;
+        font-size: 36px;
+        padding: 6px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="pure-g">
+      <div class="pure-u-1-1">
+        <h1>What is my IP address?</h1>
+        <p><code class="ip">{{ .IP }}</code></p>
+        <p>Multiple command line HTTP clients are supported,
+          including <a href="https://curl.haxx.se/">curl</a>, <a href="https://github.com/jkbrzt/httpie">httpie</a>, <a href="https://www.gnu.org/software/wget/">GNU
+            Wget</a>
+          and <a href="https://www.freebsd.org/cgi/man.cgi?fetch(1)">fetch</a>.</p>
+      </div>
+    </div>
+    <div class="pure-g">
+      <div class="pure-u-1 pure-u-md-1-2">
+        <h2>CLI examples</h2>
+        <pre>
+$ curl {{ .Host }}
+{{ .IP }}
+
+$ http -b {{ .Host }}
+{{ .IP }}
+
+$ wget -qO- {{ .Host }}
+{{ .IP }}
+
+$ fetch -qo- https://{{ .Host }}
+{{ .IP }}
+
+$ bat -print=b {{ .Host }}/ip
+{{ .IP }}</pre>
+{{ if .Country }}
+        <h2>Country lookup</h2>
+        <pre>
+$ http {{ .Host }}/country
+{{ .Country }}
+
+$ http {{ .Host }}/country-iso
+{{ .CountryISO }}</pre>
+{{ end }}
+{{ if .City }}
+        <h2>City lookup</h2>
+        <pre>
+$ http {{ .Host }}/city
+{{ .City }}</pre>
+{{ end }}
+      </div>
+      <div class="pure-u-1 pure-u-md-1-2">
+        <h2>JSON output</h2>
+        <pre>
+$ http {{ .Host }}/json
+{{ .JSON }}</pre>
+        <p>Setting the <code>Accept: application/json</code> header also works as expected.</p>
+        <h2>Plain output</h2>
+        <p>Always returns the IP address including a trailing newline, regardless of user agent.</p>
+        <pre>
+$ http {{ .Host }}/ip
+{{ .IP }}</pre>
+{{ if .Port }}
+        <h2>Port testing</h2>
+        <pre>
+$ http {{ .Host }}/port/8080
+{
+  "ip": "{{ .IP }}",
+  "port": 8080,
+  "reachable": false
+}</pre>
+{{ end }}
+      </div>
+{{ if .City }}
+      <div class="pure-u-1 pure-u-md-1-1">
+          <h2>Map</h2>
+          <iframe width="100%" height="350" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://www.openstreetmap.org/export/embed.html?bbox={{ .BoxLonLeft }}%2C{{ .BoxLatBottom }}%2C{{ .BoxLonRight }}%2C{{ .BoxLatTop }}&amp;layer=mapnik&amp;marker={{ .Latitude }}%2C{{ .Longitude }}"></iframe>
+      </div>
+{{ end }}
+      <div class="pure-u-1 pure-u-md-1-2">
+        <h2>FAQ</h2>
+        <h3>How do I force IPv4 or IPv6 lookup?</h3>
+        <p>As of 2018-07-25 it's no longer possible to force protocol using
+        the <i>v4</i> and <i>v6</i> subdomains. IPv4 or IPv6 still can be forced
+        by passing the appropiate flag to your client, e.g <code>curl -4</code>
+        or <code>curl -6</code>.</p>
+    </div>
+  </body>
+</html>
