@@ -1,11 +1,22 @@
+# Download MaxMind DB's
+FROM alpine AS download
+
+RUN apk --no-cache add ca-certificates bash git
+
+WORKDIR /root/
+
+ADD http://geolite.maxmind.com/download/geoip/database/GeoLite2-Country.mmdb.gz /root/
+ADD http://geolite.maxmind.com/download/geoip/database/GeoLite2-City.mmdb.gz /root/
+RUN gzip -d GeoLite2-Country.mmdb.gz
+RUN gzip -d GeoLite2-City.mmdb.gz
+
+
+# Final Image
 FROM mpolden/echoip
 
 WORKDIR /opt/echoip
 
-ADD http://geolite.maxmind.com/download/geoip/database/GeoLite2-Country.mmdb.gz /opt/echoip/
-ADD http://geolite.maxmind.com/download/geoip/database/GeoLite2-City.mmdb.gz /opt/echoip/
-RUN gzip -d GeoLite2-Country.mmdb.gz
-RUN gzip -d GeoLite2-City.mmdb.gz
+COPY --from=build /root/GeoLite2* /opt/echoip/
 
 COPY index.html /opt/echoip/index.html
 
